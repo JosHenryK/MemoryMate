@@ -35,7 +35,6 @@ def listen_background(recognizer):
                 audio = recognizer.listen(source, phrase_time_limit=5)
                 audio_list.append(audio)
                 logging.debug(f"Audio captured, list size: {len(audio_list)}")
-                print(audio_list)  # Print the elements of the list
             except Exception as e:
                 logging.error(f"Listening error: {str(e)}", exc_info=True)
 
