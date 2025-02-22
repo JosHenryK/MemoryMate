@@ -2,7 +2,7 @@ import speech_recognition as sr
 import pyttsx3
 import time
 import logging
-from transformers import pipeline
+import trigger_detection
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -14,17 +14,7 @@ recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 
 #initialize trigger detection
-trigger_classifier = pipeline("text-classification", model="Panda0116/emotion-classification-model")
-trigger_emotions = {
-    #anger
-    'LABEL_3' : 0.8,
-
-    #fear
-    'LABEL_4' : 0.8,
-
-    #suprise
-    'LABEL_5': 0.95
-}
+trigger_detector = trigger_detection.TriggerDetector()
 
 # Customize the text-to-speech engine
 def configure_tts():
@@ -66,18 +56,9 @@ def listen_and_recognize():
                 speak_text("Goodbye!")
                 return False
 
-            emotions = trigger_classifier(recognized_text)
-            for emotion in emotions:
-                if emotion['label'] in trigger_emotions:
-                    min_score = trigger_emotions[emotion['label']]
-                    if emotion['score'] > min_score:
-                        logging.info(f"Dementia detection triggered. Magnitude {emotion['score']}.")
-
-                        #process stuff related to handling dementia episodes
-                    else:
-                        logging.info(f"Insufficient emotion detected {emotion['label']} at magnitude {emotion['score']}.")
-                else:
-                    logging.info(f"Invalid emotion detected {emotion['label']}.")
+            if trigger_detector.detect(recognized_text):
+                logging.info("Detected dementia episode.")
+                pass;
 
             # Speak the recognized text
             speak_text(recognized_text)
