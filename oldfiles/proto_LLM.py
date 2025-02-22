@@ -1,8 +1,40 @@
+import os
+import logging
+import time
+import threading
 import speech_recognition as sr
 import pyttsx3
-import time
-import logging
-import threading
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Get the Google API key from environment variables
+api_key = os.getenv("GOOGLE_API_KEY")
+if not api_key:
+    raise ValueError("The GOOGLE_API_KEY environment variable is not set.")
+
+# Initialize the LLM (Google Gemini Pro in this case)
+llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0.7)
+
+# Define the summarization prompt
+summarization_prompt = ChatPromptTemplate.from_template(
+    """
+    You are a helpful assistant that summarizes conversations in real time.
+    Given the following conversation, provide a concise summary of the key points:
+
+    Conversation:
+    {conversation}
+
+    Summary:
+    """
+)
+
+# Create a chain for summarization
+summarization_chain = summarization_prompt | llm | StrOutputParser()
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -40,22 +72,20 @@ def listen_and_recognize():
 
             logging.info("Listening...")
             time.sleep(0.5)  # Short delay to stabilize
-            audio = recognizer.listen(source, phrase_time_limit=10)  # 5 seconds
+            audio = recognizer.listen(source, phrase_time_limit=10)  # 10 seconds
 
             # Recognize speech using Google's speech recognition
             logging.info("Processing audio...")
             recognized_text = recognizer.recognize_google(audio).lower()
-            logging.info(f"{recognized_text}")
+            logging.info(f"Recognized: {recognized_text}")
 
             # Check for exit command
             if recognized_text in ["exit", "stop", "quit"]:
                 logging.info("Exiting program...")
                 speak_text("Goodbye!")
-                return False
+                return False, recognized_text
 
-            # Speak the recognized text
-            speak_text(recognized_text)
-            return True
+            return True, recognized_text
 
     except sr.RequestError as e:
         logging.error(f"Could not request results from Google Speech Recognition service: {e}")
@@ -64,16 +94,23 @@ def listen_and_recognize():
     except Exception as e:
         logging.error(f"An error occurred: {e}")
 
-    return True
+    return True, ""
 
-def main():
-    """Main function to run the speech-to-text and text-to-speech loop."""
-    logging.info("Starting speech-to-text and text-to-speech program...")
+def real_time_summarizer():
+    conversation = []  # Store the conversation history
     speak_text("Hello! I am ready to listen.")
-
     running = True
+
     while running:
-        running = listen_and_recognize()
+        running, new_input = listen_and_recognize()
+        if new_input:
+            conversation.append(f"You: {new_input}")
+            full_conversation = "\n".join(conversation)
+
+            # Generate the summary
+            summary = summarization_chain.invoke({"conversation": full_conversation})
+            logging.info(f"Summary: {summary}")
+            speak_text(f"Summary: {summary}")
 
 if __name__ == "__main__":
-    main()
+    real_time_summarizer()
