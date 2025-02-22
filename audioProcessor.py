@@ -2,7 +2,7 @@ import speech_recognition as sr
 import pyttsx3
 import time
 import logging
-import threading
+from transformers import pipeline
 
 # Set up logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
@@ -12,6 +12,19 @@ recognizer = sr.Recognizer()
 
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
+
+#initialize trigger detection
+trigger_classifier = pipeline("text-classification", model="Panda0116/emotion-classification-model")
+trigger_emotions = {
+    #anger
+    'LABEL_3' : 0.8,
+
+    #fear
+    'LABEL_4' : 0.8,
+
+    #suprise
+    'LABEL_5': 0.95
+}
 
 # Customize the text-to-speech engine
 def configure_tts():
@@ -53,6 +66,19 @@ def listen_and_recognize():
                 speak_text("Goodbye!")
                 return False
 
+            emotions = trigger_classifier(recognized_text)
+            for emotion in emotions:
+                if emotion['label'] in trigger_emotions:
+                    min_score = trigger_emotions[emotion['label']]
+                    if emotion['score'] > min_score:
+                        logging.info(f"Dementia detection triggered. Magnitude {emotion['score']}.")
+
+                        #process stuff related to handling dementia episodes
+                    else:
+                        logging.info(f"Insufficient emotion detected {emotion['label']} at magnitude {emotion['score']}.")
+                else:
+                    logging.info(f"Invalid emotion detected {emotion['label']}.")
+
             # Speak the recognized text
             speak_text(recognized_text)
             return True
@@ -61,8 +87,8 @@ def listen_and_recognize():
         logging.error(f"Could not request results from Google Speech Recognition service: {e}")
     except sr.UnknownValueError:
         logging.warning("Sorry, I could not understand what you said.")
-    except Exception as e:
-        logging.error(f"An error occurred: {e}")
+    #except Exception as e:
+    #    logging.error(f"An error occurred: {e}")
 
     return True
 
