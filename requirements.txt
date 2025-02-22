@@ -1,0 +1,10 @@
+pyaudio~=0.2.14
+wave~=0.0.2
+pydub
+openai-whisper
+pip~=25.0
+simplejson~=3.19.3
+setuptools~=58.0.4
+packaging~=24.0
+pyparsing~=3.1.2
+zipp~=3.18.2
