@@ -1,51 +1,38 @@
-# Python program to translate
-# speech to text and text to speech
+# Python program to translate speech to text and text to speech
 
 import speech_recognition as sr
 import pyttsx3
 
 # Initialize the recognizer
-r = sr.Recognizer()
+recognizer = sr.Recognizer()
 
-# Function to convert text to
-# speech
-def SpeakText(command):
+# Initialize the text-to-speech engine
+engine = pyttsx3.init()
 
-    # Initialize the engine
-    engine = pyttsx3.init()
+def speak_text(command):
+    """Convert text to speech."""
     engine.say(command)
     engine.runAndWait()
 
-
-# Loop infinitely for user to
-# speak
-
-while(1):
-
-    # Exception handling to handle
-    # exceptions at the runtime
+# Infinite loop for continuous speech-to-text and text-to-speech
+while True:
     try:
+        # Use the microphone as the source for input
+        with sr.Microphone() as source:
+            # Adjust for ambient noise and listen for user input
+            print("Listening...")
+            recognizer.adjust_for_ambient_noise(source, duration=0.2)
+            audio = recognizer.listen(source)
 
-        # use the microphone as source for input.
-        with sr.Microphone() as source2:
+            # Recognize speech using Google's speech recognition
+            recognized_text = recognizer.recognize_google(audio).lower()
+            print(f"Did you say: {recognized_text}")
 
-            # wait for a second to let the recognizer
-            # adjust the energy threshold based on
-            # the surrounding noise level
-            r.adjust_for_ambient_noise(source2, duration=0.2)
-
-            #listens for the user's input
-            audio2 = r.listen(source2)
-
-            # Using google to recognize audio
-            MyText = r.recognize_google(audio2)
-            MyText = MyText.lower()
-
-            print("&quot;Did you say &quot;",MyText)
-            SpeakText(MyText)
+            # Speak the recognized text
+            speak_text(recognized_text)
 
     except sr.RequestError as e:
-        print("&quot;Could not request results; {0}&quot;".format(e))
+        print(f"Could not request results from Google Speech Recognition service: {e}")
 
     except sr.UnknownValueError:
-        print("&quot;unknown error occurred&quot;")
+        print("Sorry, I could not understand what you said.")
