@@ -1,8 +1,8 @@
 # Ignore the entire venv directory
-venv/
+venv/*
 
 # Ignore all .idea configuration files
-.idea/
+.idea/*
 
 # Ignore all python compiled files
 *.pyc
@@ -12,3 +12,5 @@ __pycache__/
 dist/
 build/
 *.egg-info/
+*.xml
+

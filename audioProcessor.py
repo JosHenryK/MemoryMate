@@ -1,7 +1,11 @@
-# Python program to translate speech to text and text to speech
-
 import speech_recognition as sr
 import pyttsx3
+import time
+import logging
+import threading
+
+# Set up logging
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 # Initialize the recognizer
 recognizer = sr.Recognizer()
@@ -9,30 +13,67 @@ recognizer = sr.Recognizer()
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
 
+# Customize the text-to-speech engine
+def configure_tts():
+    """Configure the text-to-speech engine."""
+    voices = engine.getProperty('voices')
+    engine.setProperty('voice', voices[0].id)  # Change index to switch voices
+    engine.setProperty('rate', 150)  # Speed of speech
+    engine.setProperty('volume', 1.0)  # Volume level (0.0 to 1.0)
+
+configure_tts()
+
 def speak_text(command):
     """Convert text to speech."""
+    logging.info(f"Speaking: {command}")
     engine.say(command)
     engine.runAndWait()
 
-# Infinite loop for continuous speech-to-text and text-to-speech
-while True:
+def listen_and_recognize():
+    """Listen to the microphone and recognize speech."""
     try:
-        # Use the microphone as the source for input
         with sr.Microphone() as source:
-            # Adjust for ambient noise and listen for user input
-            print("Listening...")
-            recognizer.adjust_for_ambient_noise(source, duration=0.2)
-            audio = recognizer.listen(source)
+            # Dynamically adjust for ambient noise
+            logging.info("Adjusting for ambient noise...")
+            recognizer.adjust_for_ambient_noise(source, duration=0.5)
+            logging.info(f"Energy threshold set to: {recognizer.energy_threshold}")
+
+            logging.info("Listening...")
+            time.sleep(0.5)  # Short delay to stabilize
+            audio = recognizer.listen(source, phrase_time_limit=10)  # 5 seconds
 
             # Recognize speech using Google's speech recognition
+            logging.info("Processing audio...")
             recognized_text = recognizer.recognize_google(audio).lower()
-            print(f"Did you say: {recognized_text}")
+            logging.info(f"{recognized_text}")
+
+            # Check for exit command
+            if recognized_text in ["exit", "stop", "quit"]:
+                logging.info("Exiting program...")
+                speak_text("Goodbye!")
+                return False
 
             # Speak the recognized text
             speak_text(recognized_text)
+            return True
 
     except sr.RequestError as e:
-        print(f"Could not request results from Google Speech Recognition service: {e}")
-
+        logging.error(f"Could not request results from Google Speech Recognition service: {e}")
     except sr.UnknownValueError:
-        print("Sorry, I could not understand what you said.")
+        logging.warning("Sorry, I could not understand what you said.")
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+
+    return True
+
+def main():
+    """Main function to run the speech-to-text and text-to-speech loop."""
+    logging.info("Starting speech-to-text and text-to-speech program...")
+    speak_text("Hello! I am ready to listen.")
+
+    running = True
+    while running:
+        running = listen_and_recognize()
+
+if __name__ == "__main__":
+    main()
