@@ -261,7 +261,7 @@ def flet_main(page: ft.Page):
         elif e.control.selected_index == 3:
             summary_page(page)
         elif e.control.selected_index == 4:
-            page.window_close()
+            page.window.close()
         page.update()
 
     page.navigation_bar = ft.NavigationBar(
