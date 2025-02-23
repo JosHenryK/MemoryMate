@@ -29,7 +29,7 @@ class ConversationManager:
         """
         Clears the conversation history.
         """
-        self.history.clear()
+        self.history = []
         logging.warning("Conversation history cleared")
         
     def get_conversation_text(self):
