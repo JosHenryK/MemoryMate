@@ -134,6 +134,9 @@ def home_page(page):
         )
     )
 
+# Global variable to store chat messages
+chat_messages = []
+
 def chat_page(page):
     # Chat messages container
     chat = ft.ListView(
@@ -141,6 +144,10 @@ def chat_page(page):
         spacing=10,
         auto_scroll=True,
     )
+
+    # Load existing chat messages
+    for msg in chat_messages:
+        chat.controls.append(ft.Text(msg))
 
     # Message input field
     new_message = ft.TextField(
@@ -155,6 +162,7 @@ def chat_page(page):
 
     def print_to_chat(msg):
         chat.controls.append(ft.Text(msg))
+        chat_messages.append(msg)  # Store the message in the global variable
         page.update()
 
     page_functions["print"] = print_to_chat
