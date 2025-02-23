@@ -39,7 +39,7 @@ class ConversationManager:
         Returns:
             str: The conversation history.
         """
-        return "\n".join(self.history)
+        return f"This is a conversation between a me and you.\n{"\n".join(self.history)}\nYOU:"
     
     def set_active(self, state):
         """

@@ -1,5 +1,5 @@
 import threading
-from tts import configure_tts, speak
+from tts import speak, tts_worker
 from chains import create_chains
 from conversation import ConversationManager
 import speech_recognition as sr
@@ -28,7 +28,8 @@ def setup_recognizer():
 
 # Initialize components
 logging.basicConfig(level=logging.DEBUG)
-configure_tts()
+
+threading.Thread(target=tts_worker, daemon=True).start()
 
 # Create dependencies
 recognizer = setup_recognizer()
@@ -52,10 +53,10 @@ def listen_background():
                 logging.info("Processing audio...")
                 recognized_text = recognizer.recognize_google(audio).lower()
                 logging.info(f"{recognized_text}")
-                conversation.add_message(recognized_text)
 
+                log_user_rec(recognized_text)
                 if trigger_detector.detect(recognized_text):
-                    llm_process(recognized_text)
+                    llm_process()
                     print("PROCESSED")
 
             except Exception as e:
@@ -96,7 +97,8 @@ def flet_main(page: ft.Page):
     def send_click(e):
         if new_message.value.strip():
             # Echo the message back to the chat
-            llm_process(new_message.value.strip())
+            log_user_rec(new_message.value.strip())
+            llm_process()
             new_message.value = ""
             page.update()
 
@@ -117,11 +119,15 @@ def flet_main(page: ft.Page):
         ),
     )
 
-def llm_process(msg):
-    logging.info("Sending text to LLM")
+def log_user_rec(msg):
+    conversation.add_message(f'ME: {msg}')
     page_functions["print"](f'You: {msg}')
 
+def llm_process():
+    logging.info("Sending text to LLM")
+
     result = llm.send_message(conversation.get_conversation_text()).text
+    conversation.add_message(f'YOU: {result}')
     page_functions["print"](f'Assistant: {result}')
     speak(result)
 
