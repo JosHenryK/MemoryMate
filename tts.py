@@ -4,7 +4,7 @@ import logging
 
 # Initialize TTS engine
 engine = pyttsx3.init()
-tts_lock = threading.Lock()
+#tts_lock = threading.Lock()
 
 def configure_tts():
     """Configure text-to-speech engine"""
@@ -31,16 +31,16 @@ def speak(text):
 
     """
     try:
-        with tts_lock:
-            logging.info(f"Speaking: {text[:50]}...")
-            engine = pyttsx3.init()  # Reinitialize engine in thread
-            engine.say(text)
-            engine.runAndWait()
-            engine.stop()  # Explicitly stop the engine
+        #with tts_lock:
+        logging.info(f"Speaking: {text[:50]}...")
+        #engine = pyttsx3.init()  # Reinitialize engine in thread
+        engine.say(text)
+        engine.runAndWait()
+            #engine.stop()  # Explicitly stop the engine
     except Exception as e:
         logging.error(f"Speech error: {str(e)}", exc_info=True)
             
-    threading.Thread(target=speak, daemon=True).start()
+    #threading.Thread(target=speak, daemon=True).start()
 
 if __name__ == "__main__":
     # Test TTS independently

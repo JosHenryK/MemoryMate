@@ -6,6 +6,7 @@ import speech_recognition as sr
 import trigger_detection
 import logging
 import flet as ft
+import llm
 
 if __name__ != "__main__":
     quit()
@@ -51,9 +52,11 @@ def listen_background():
                 logging.info("Processing audio...")
                 recognized_text = recognizer.recognize_google(audio).lower()
                 logging.info(f"{recognized_text}")
+                conversation.add_message(recognized_text)
 
                 if trigger_detector.detect(recognized_text):
                     llm_process(recognized_text)
+                    print("PROCESSED")
 
             except Exception as e:
                 logging.error(f"Listening error: {str(e)}", exc_info=True)
@@ -62,27 +65,71 @@ def listen_background():
 audio_thread = threading.Thread(target=listen_background, daemon=True)#target=listen_background)
 audio_thread.start()
 
-def llm_process(msg):
-    conversation.add_message(msg)
-    logging.info("Sending text to LLM")
+page_functions = {}
 
 def flet_main(page: ft.Page):
-    chat = ft.Column()
-    new_message = ft.TextField()
+    print("MAIN CALLED")
+    page.title = "MemoryMate"
+
+    # Chat messages container
+    chat = ft.ListView(
+        expand=True,
+        spacing=10,
+        auto_scroll=True,
+    )
+
+    # Message input field
+    new_message = ft.TextField(
+        hint_text="Type a message...",
+        autofocus=True,
+        shift_enter=True,
+        min_lines=1,
+        max_lines=5,
+        on_submit=lambda e: send_click(e),
+    )
+
+    def print_to_chat(msg):
+        chat.controls.append(ft.Text(msg))
+        page.update()
+    page_functions["print"] = print_to_chat
 
     def send_click(e):
-        chat.controls.append(ft.Text(new_message.value))
-        new_message.value = ""
-        page.update()
+        if new_message.value.strip():
+            # Echo the message back to the chat
+            llm_process(new_message.value.strip())
+            new_message.value = ""
+            page.update()
 
+    # Add controls to page
     page.add(
-        chat, ft.Row(controls=[new_message, ft.ElevatedButton("Send", on_click=send_click)])
+        ft.Container(
+            content=chat,
+            border=ft.border.all(1),
+            border_radius=5,
+            padding=10,
+            expand=True,
+        ),
+        ft.Row(
+            controls=[
+                new_message,
+                ft.ElevatedButton("Send", on_click=send_click),
+            ]
+        ),
     )
+
+def llm_process(msg):
+    logging.info("Sending text to LLM")
+    page_functions["print"](f'You: {msg}')
+
+    result = llm.send_message(conversation.get_conversation_text()).text
+    page_functions["print"](f'Assistant: {result}')
+    speak(result)
 
 try:
     ft.app(flet_main)
 except KeyboardInterrupt:
     logging.info("Shutting down...")
+
 
 stopEvent.set()
 audio_thread.join()

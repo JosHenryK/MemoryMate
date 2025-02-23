@@ -8,7 +8,7 @@ class ConversationManager:
     """
 
     def __init__(self):
-        self.history = deque(maxlen=CONFIG["max_history"])
+        self.history = []
         self.active = False
         
     def add_message(self, text):
@@ -20,6 +20,10 @@ class ConversationManager:
         """
         self.history.append(f"User: {text}")
         logging.debug(f"Added message: {text}")
+
+        if len(self.history) > 10:
+            self.history.pop(0)
+            logging.debug(f"Removed first message. Exceed max history length.");
         
     def clear(self):
         """
