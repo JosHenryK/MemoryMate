@@ -32,9 +32,6 @@ chains = create_chains()
 conversation = ConversationManager()
 trigger_detector = trigger_detection.TriggerDetector()
 
-# variable to store the summary
-summary_content = "" 
-
 def log_user_rec(msg):
     conversation.add_message(f'ME: {msg}')
     if "print" in page_functions:
@@ -69,11 +66,8 @@ page_functions = {}
 
 # Method to summarize the chat
 def summarize_chat():
-    global summary_content
     summary_prompt = "Please summarize the conversation so far."
-    summary_response = chat_session.send_message(summary_prompt)
-    summary_content = summary_response
-    return summary_response
+    return llm.send_message(summary_prompt).text
 
 # Function to display the summary page
 def summary_page(page):
