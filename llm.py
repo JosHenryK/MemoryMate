@@ -14,7 +14,7 @@ genai.configure(api_key=google_api_key)
 
 # Configure the model for concise responses
 generation_config = {
-    "temperature": 0.5,
+    "temperature": 0.75,
     "top_p": 0.9,
     "top_k": 30,
     "max_output_tokens": 200,
