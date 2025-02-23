@@ -51,4 +51,6 @@ if __name__ == "__main__":
     # Test conversation management
     cm = ConversationManager()
     cm.add_message("Test message")
+    cm.add_message("Another test message")
+    cm.add_message("Final test message")
     print(cm.get_conversation_text())
