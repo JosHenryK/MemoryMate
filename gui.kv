@@ -1,0 +1,140 @@
+<MainWindow>:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 10
+
+    BoxLayout:
+        size_hint: 1, 0.1
+        spacing: 10
+
+        Button:
+            id: listen_btn
+            text: 'Start Listening'
+            on_press: root.toggle_listening()
+
+        Button:
+            text: 'Settings'
+            size_hint: 0.3, 1
+            on_press: root.open_settings()
+
+    ScrollView:
+        size_hint: 1, 0.7
+
+        Label:
+            id: chat_log
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+            halign: 'left'
+            valign: 'top'
+            padding: 10, 10
+
+<SettingsDialog>:
+    title: 'Trigger Words & Emotion Thresholds'
+    size_hint: 0.8, 0.8
+
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Label:
+            text: 'Trigger Words (comma-separated):'
+            size_hint_y: None
+            height: 30
+
+        TextInput:
+            id: trigger_words_input
+            size_hint_y: None
+            height: 60
+
+        GridLayout:
+            cols: 3
+            spacing: 10
+            size_hint_y: 0.6
+
+            Label:
+                text: 'Emotion'
+                bold: True
+            Label:
+                text: 'Threshold'
+                bold: True
+            Label:
+                text: 'Value'
+                bold: True
+
+            # Emotion sliders
+            Label:
+                text: 'Sadness'
+            Slider:
+                id: sadness_slider
+                min: 0
+                max: 1
+                step: 0.05
+            Label:
+                id: sadness_value
+                text: '{:.2f}'.format(sadness_slider.value)
+
+            # Repeat for other emotions...
+            # [Similar blocks for joy, love, anger, fear, surprise]
+
+            Label:
+                text: 'Joy'
+            Slider:
+                id: joy_slider
+                min: 0
+                max: 1
+                step: 0.05
+            Label:
+                id: joy_value
+                text: '{:.2f}'.format(joy_slider.value)
+
+            Label:
+                text: 'Love'
+            Slider:
+                id: love_slider
+                min: 0
+                max: 1
+                step: 0.05
+            Label:
+                id: love_value
+                text: '{:.2f}'.format(love_slider.value)
+
+            Label:
+                text: 'Anger'
+            Slider:
+                id: anger_slider
+                min: 0
+                max: 1
+                step: 0.05
+            Label:
+                id: anger_value
+                text: '{:.2f}'.format(anger_slider.value)
+
+            Label:
+                text: 'Fear'
+            Slider:
+                id: fear_slider
+                min: 0
+                max: 1
+                step: 0.05
+            Label:
+                id: fear_value
+                text: '{:.2f}'.format(fear_slider.value)
+
+            Label:
+                text: 'Surprise'
+            Slider:
+                id: surprise_slider
+                min: 0
+                max: 1
+                step: 0.05
+            Label:
+                id: surprise_value
+                text: '{:.2f}'.format(surprise_slider.value)
+
+        Button:
+            text: 'Save'
+            size_hint_y: None
+            height: 40
+            on_press: root.save_settings()
