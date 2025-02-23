@@ -7,6 +7,11 @@ from conversation import ConversationManager
 import speech_recognition as sr
 import trigger_detection
 import logging
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.popup import Popup
+from kivy.factory import Factory
+from kivy.lang import Builder
 
 if __name__ != "__main__":
     quit()
@@ -37,10 +42,7 @@ chains = create_chains()
 conversation = ConversationManager()
 trigger_detector = trigger_detection.TriggerDetector()
 
-def llm_process(msg):
-    conversation.add_message(msg)
-    logging.info("Sending text to LLM")
-
+stopEvent = threading.Event()
 def listen_background():
     """Continuous background listening.
 
@@ -49,7 +51,7 @@ def listen_background():
     """
     logging.info("Starting background listening...")
     with sr.Microphone() as source:
-        while True:
+        while not stopEvent.is_set():
             try:
                 audio = recognizer.listen(source, phrase_time_limit=5)
                 logging.info("Processing audio...")
@@ -63,13 +65,7 @@ def listen_background():
                 logging.error(f"Listening error: {str(e)}", exc_info=True)
 
 # Start threads
-audio_thread = threading.Thread(target=listen_background, args=())
-
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.popup import Popup
-from kivy.factory import Factory
-from kivy.lang import Builder
+audio_thread = threading.Thread(target=listen_background, daemon=True)#target=listen_background)
 
 Builder.load_file("gui.kv")
 
@@ -81,10 +77,12 @@ class MainWindow(BoxLayout):
         if self.ids.listen_btn.text == 'Start Listening':
             self.start_listening()
         else:
-            quit()
+            self.ids.listen_btn.text = 'Start Listening'
+            stopEvent.set()
 
     def start_listening(self):
-        self.ids.listen_btn.text = 'Stop Listening'
+        self.ids.listen_btn.text = 'Stop Listening/Quit'
+        stopEvent.clear()
         audio_thread.start()
 
     def open_settings(self):
@@ -120,12 +118,18 @@ class SettingsDialog(Popup):
 
 class MemoryMateApp(App):
     def build(self):
-        return MainWindow()
+        self.main = MainWindow()
+        return self.main
+
+mainApp = MemoryMateApp()
+
+def llm_process(msg):
+    conversation.add_message(msg)
+    logging.info("Sending text to LLM")
+    mainApp.main.update_chat(msg)
 
 try:
-    MemoryMateApp().run()
-    while True:
-        pass;
+    mainApp.run()
 except KeyboardInterrupt:
     logging.info("Shutting down...")
     audio_thread.join()
