@@ -1,6 +1,6 @@
 # **MemoryMate**
 
-MemoryMate is a powerful and intuitive application designed to help users store, organize, and retrieve important information effortlessly. Whether you need to keep track of notes, tasks, or personal reminders, MemoryMate ensures your memories are just a click away.
+MemoryMate interprets conversations between patients and caregivers in real time to extract key points like names, dates, and people. The device employs a unique, multimodal model to identify the state of the patient and whether intervention from a caregiver is required, intervening itself in most situations by providing a compassionate and caring response. In addition to supporting the needs of the patient, MemoryMate offers real-time summaries to care providers and the ability to schedule reminders to patients, decentralizing healthcare and allowing caregivers to make more informed decisions regarding patient outcomes.
 
 ## **Features**
 
