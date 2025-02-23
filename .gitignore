@@ -1,0 +1,16 @@
+.idea/inspectionProfiles/profiles_settings.xml
+.idea/MemoryMate.iml
+.idea/misc.xml
+.idea/vcs.xml
+__pycache__/audio.cpython-311.pyc
+__pycache__/audio.cpython-313.pyc
+__pycache__/chains.cpython-313.pyc
+__pycache__/config.cpython-313.pyc
+__pycache__/conversation.cpython-313.pyc
+__pycache__/proto_LLM.cpython-311.pyc
+__pycache__/proto_LLM.cpython-313.pyc
+__pycache__/test_proto_LLM.cpython-311.pyc
+__pycache__/trigger_detection.cpython-313.pyc
+__pycache__/tts.cpython-313.pyc
+tests/__pycache__/test_chains.cpython-311-pytest-7.4.0.pyc
+tests/__pycache__/test_proto_LLM.cpython-311-pytest-7.4.0.pyc
