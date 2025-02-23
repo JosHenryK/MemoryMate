@@ -1,5 +1,6 @@
 import os
 import logging
+import trigger_detection
 import time
 import threading
 import speech_recognition as sr
@@ -45,6 +46,9 @@ recognizer = sr.Recognizer()
 # Initialize the text-to-speech engine
 engine = pyttsx3.init()
 
+#initialize trigger detection
+trigger_detector = trigger_detection.TriggerDetector()
+
 # Customize the text-to-speech engine
 def configure_tts():
     """Configure the text-to-speech engine."""
@@ -85,7 +89,7 @@ def listen_and_recognize():
                 speak_text("Goodbye!")
                 return False, recognized_text
 
-            return True, recognized_text
+            return trigger_detector.detect(recognized_text), recognized_text
 
     except sr.RequestError as e:
         logging.error(f"Could not request results from Google Speech Recognition service: {e}")
