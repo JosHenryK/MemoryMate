@@ -1,23 +1,15 @@
 import threading
 import logging
 import queue
-import pyttsx3
+from gtts import gTTS
+from playsound import playsound
+import os
 
 # Initialize logging
 logging.basicConfig(level=logging.DEBUG)
 
 tts_lock = threading.Lock()
 tts_queue = queue.Queue()
-
-# Initialize pyttsx3 engine
-engine = pyttsx3.init()
-
-# Set properties for Australian male voice
-voices = engine.getProperty('voices')
-for voice in voices:
-    if 'en-au' in voice.id and 'male' in voice.name.lower():
-        engine.setProperty('voice', voice.id)
-        break
 
 def tts_worker():
     """Worker thread to process TTS queue"""
@@ -28,8 +20,11 @@ def tts_worker():
         try:
             with tts_lock:
                 logging.info(f"Speaking: {text[:50]}...")
-                engine.say(text)
-                engine.runAndWait()
+                tts = gTTS(text)
+                filename = "temp_tts.mp3"
+                tts.save(filename)
+                playsound(filename)
+                os.remove(filename)
         except Exception as e:
             logging.error(f"Speech error: {str(e)}", exc_info=True)
         tts_queue.task_done()
