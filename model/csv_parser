@@ -1,0 +1,19 @@
+import csv
+
+def delete_column(csv_file):
+    with open(csv_file, 'r') as file:
+        reader = csv.reader(file)
+        rows = [row for row in reader]
+
+    # Delete the third column
+    for row in rows:
+        del row[2]
+
+    with open(csv_file, 'w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(rows)
+
+csv_file = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/dataset.csv'
+delete_column(csv_file)
+print("Done")
+    
