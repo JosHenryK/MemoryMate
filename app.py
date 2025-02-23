@@ -1,17 +1,11 @@
-import time
 import threading
-from config import CONFIG, get_save_path
 from tts import configure_tts, speak
 from chains import create_chains
 from conversation import ConversationManager
 import speech_recognition as sr
 import trigger_detection
 import logging
-from kivy.app import App
-from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.popup import Popup
-from kivy.factory import Factory
-from kivy.lang import Builder
+import flet as ft
 
 if __name__ != "__main__":
     quit()
@@ -66,70 +60,29 @@ def listen_background():
 
 # Start threads
 audio_thread = threading.Thread(target=listen_background, daemon=True)#target=listen_background)
-
-Builder.load_file("gui.kv")
-
-class MainWindow(BoxLayout):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
-    def toggle_listening(self):
-        if self.ids.listen_btn.text == 'Start Listening':
-            self.start_listening()
-        else:
-            self.ids.listen_btn.text = 'Start Listening'
-            stopEvent.set()
-
-    def start_listening(self):
-        self.ids.listen_btn.text = 'Stop Listening/Quit'
-        stopEvent.clear()
-        audio_thread.start()
-
-    def open_settings(self):
-        Factory.SettingsDialog().open()
-
-    def update_chat(self, message):
-        self.ids.chat_log.text += f'\n{message}'
-        self.ids.chat_log.height = self.ids.chat_log.texture_size[1]
-
-
-class SettingsDialog(Popup):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        main_app = App.get_running_app().root
-        self.ids.trigger_words_input.text = ', '.join(trigger_detector.settings.trigger_phrases)
-
-        # Initialize sliders with current values
-        for emotion in trigger_detector.settings.emotion_thresholds:
-            slider = self.ids[f'{emotion}_slider']
-            slider.value = trigger_detector.settings.emotion_thresholds[emotion]
-
-    def save_settings(self):
-        main_app = App.get_running_app().root
-        trigger_detector.settings.trigger_phrases = [
-            word.strip() for word in self.ids.trigger_words_input.text.split(',')
-        ]
-
-        for emotion in trigger_detector.settings.emotion_thresholds:
-            slider = self.ids[f'{emotion}_slider']
-            trigger_detector.settings.emotion_thresholds[emotion] = slider.value
-
-        self.dismiss()
-
-class MemoryMateApp(App):
-    def build(self):
-        self.main = MainWindow()
-        return self.main
-
-mainApp = MemoryMateApp()
+audio_thread.start()
 
 def llm_process(msg):
     conversation.add_message(msg)
     logging.info("Sending text to LLM")
-    mainApp.main.update_chat(msg)
+
+def flet_main(page: ft.Page):
+    chat = ft.Column()
+    new_message = ft.TextField()
+
+    def send_click(e):
+        chat.controls.append(ft.Text(new_message.value))
+        new_message.value = ""
+        page.update()
+
+    page.add(
+        chat, ft.Row(controls=[new_message, ft.ElevatedButton("Send", on_click=send_click)])
+    )
 
 try:
-    mainApp.run()
+    ft.app(flet_main)
 except KeyboardInterrupt:
     logging.info("Shutting down...")
-    audio_thread.join()
+
+stopEvent.set()
+audio_thread.join()
