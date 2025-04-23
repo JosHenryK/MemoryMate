@@ -1,9 +1,3 @@
-# Ignore the entire venv directory
-venv/*
-
-# Ignore all .idea configuration files
-.idea/*
-
 # Ignore all python compiled files
 *.pyc
 __pycache__/

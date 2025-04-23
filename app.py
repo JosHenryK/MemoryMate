@@ -7,11 +7,9 @@ from audio import audio_list, setup_recognizer, listen_background
 from chains import create_chains
 from conversation import ConversationManager
 
+
+#Entry point of the application. Initializes components, creates dependencies, and starts necessary threads.
 def main():
-    """
-    Entry point of the application.
-    Initializes components, creates dependencies, and starts necessary threads.
-    """
     # Initialize components
     logging.basicConfig(level=logging.DEBUG)
     configure_tts()

@@ -3,31 +3,18 @@ import logging
 
 audio_list = []
 
+#Initialize and configure speech recognizer. This function creates a speech recognizer object and configures it by adjusting for ambient noise. It also logs the energy threshold that is set for the recognizer.
+#Returns: recognizer (Recognizer): The configured speech recognizer object.
 def setup_recognizer():
-    """Initialize and configure speech recognizer.
-
-    This function creates a speech recognizer object and configures it by adjusting for ambient noise.
-    It also logs the energy threshold that is set for the recognizer.
-
-    Returns:
-        recognizer (Recognizer): The configured speech recognizer object.
-    """
     recognizer = sr.Recognizer()
     with sr.Microphone() as source:
         recognizer.adjust_for_ambient_noise(source)
         logging.info(f"Energy threshold set to: {recognizer.energy_threshold}")
     return recognizer
 
+#Continuous background listening. This function continuously listens for audio input from the microphone and puts the captured audio into a list for further processing.
+#Args: recognizer (Recognizer): The speech recognition object used to capture audio.
 def listen_background(recognizer):
-    """Continuous background listening.
-
-    This function continuously listens for audio input from the microphone and puts the captured audio
-    into a list for further processing.
-
-    Args:
-        recognizer (Recognizer): The speech recognition object used to capture audio.
-
-    """
     logging.info("Starting background listening...")
     with sr.Microphone() as source:
         while True:

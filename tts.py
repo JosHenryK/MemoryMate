@@ -6,8 +6,8 @@ import logging
 engine = pyttsx3.init()
 tts_lock = threading.Lock()
 
+#Configure text-to-speech engine
 def configure_tts():
-    """Configure text-to-speech engine"""
     logging.debug("Configuring TTS engine...")
     try:
         voices = engine.getProperty('voices')
@@ -23,13 +23,9 @@ def configure_tts():
     except Exception as e:
         logging.error(f"TTS configuration failed: {e}", exc_info=True)
 
+#Thread-safe text-to-speech with queue.
+#Args: text (str): The text to be spoken.
 def speak(text):
-    """Thread-safe text-to-speech with queue.
-
-    Args:
-        text (str): The text to be spoken.
-
-    """
     try:
         with tts_lock:
             logging.info(f"Speaking: {text[:50]}...")

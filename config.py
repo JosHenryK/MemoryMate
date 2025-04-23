@@ -21,11 +21,7 @@ LLM_CONFIG = {
     'model': 'gemini-1.5-flash'  # Add this line with the appropriate model name
 }
 
-# Path configuration
+# Path configuration. Returns the save folder path specified in the CONFIG dictionary. If the folder doesn't exist, it will be created.
 def get_save_path():
-    """
-    Returns the save folder path specified in the CONFIG dictionary.
-    If the folder doesn't exist, it will be created.
-    """
     os.makedirs(CONFIG["save_folder"], exist_ok=True)
     return CONFIG["save_folder"]

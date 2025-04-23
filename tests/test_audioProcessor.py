@@ -1,6 +1,7 @@
 @patch('audioProcessor.summary_chain.invoke')
 @patch('audioProcessor.save_summary')
 @patch('audioProcessor.speak')
+
 def test_generate_full_summary_success(mock_speak, mock_save_summary, mock_invoke):
     # Mock the return value of the summary chain
     mock_invoke.return_value = "This is a generated summary."
