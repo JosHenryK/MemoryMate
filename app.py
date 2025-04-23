@@ -12,8 +12,8 @@ import sys
 if __name__ != "__main__":
     quit()
 
+#Initialize and configure speech recognizer
 def setup_recognizer():
-    """Initialize and configure speech recognizer."""
     recognizer_result = sr.Recognizer()
     with sr.Microphone() as source:
         recognizer_result.adjust_for_ambient_noise(source)
@@ -39,8 +39,8 @@ def log_user_rec(msg):
     else:
         logging.error("print function not found in page_functions")
 
+#Continuous background listening
 def listen_background():
-    """Continuous background listening."""
     logging.info("Starting background listening...")
     with sr.Microphone() as source:
         while not stopEvent.is_set():
@@ -88,7 +88,6 @@ def llm_process():
         logging.error("print function not found in page_functions")
     speak(result)
     conversation.clear()
-
 
 def home_page(page):
     page.add(

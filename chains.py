@@ -3,13 +3,10 @@ from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from config import LLM_CONFIG
 
+#Create LLM processing chains. Returns a dictionary containing two processing chains:
+#    - 'key_points': A processing chain that identifies key points in a conversation.
+#    - 'summary': A processing chain that creates a summary of a conversation.
 def create_chains():
-    """Create LLM processing chains.
-    
-    Returns a dictionary containing two processing chains:
-    - 'key_points': A processing chain that identifies key points in a conversation.
-    - 'summary': A processing chain that creates a summary of a conversation.
-    """
     llm = ChatGoogleGenerativeAI(**LLM_CONFIG)
     
     key_points_prompt = ChatPromptTemplate.from_template(

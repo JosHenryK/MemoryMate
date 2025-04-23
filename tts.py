@@ -11,8 +11,8 @@ logging.basicConfig(level=logging.DEBUG)
 tts_lock = threading.Lock()
 tts_queue = queue.Queue()
 
+#Worker thread to process TTS queue
 def tts_worker():
-    """Worker thread to process TTS queue"""
     while True:
         text = tts_queue.get()
         if text is None:
@@ -29,13 +29,9 @@ def tts_worker():
             logging.error(f"Speech error: {str(e)}", exc_info=True)
         tts_queue.task_done()
 
+#Add text to TTS queue for speaking
+#Args: text (str): The text to be spoken.
 def speak(text):
-    """Add text to TTS queue for speaking
-
-    Args:
-        text (str): The text to be spoken.
-
-    """
     logging.debug(f"Queueing text for speech: {text}")
     tts_queue.put(text)
 
