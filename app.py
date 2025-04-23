@@ -24,16 +24,16 @@ trigger_detector = trigger_detection.TriggerDetector()
 listening_event = threading.Event()
 audio_thread = None
 
+#Initialize and configure speech recognizer.
 def setup_recognizer():
-    """Initialize and configure speech recognizer."""
     recognizer_result = sr.Recognizer()
     with sr.Microphone() as source:
         recognizer_result.adjust_for_ambient_noise(source)
         logging.info(f"Energy threshold set to: {recognizer_result.energy_threshold}")
     return recognizer_result
 
+#Continuous background listening.
 def listen_background():
-    """Continuous background listening."""
     logging.info("Starting background listening...")
     with sr.Microphone() as source:
         while listening_event.is_set():  # Check event instead of global variable

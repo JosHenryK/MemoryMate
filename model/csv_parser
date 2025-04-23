@@ -1,16 +1,16 @@
 import csv
+import random
+
+file_path = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/unfiltered_dataset.csv'
+input_file = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/filtered_dataset.csv'
+output_file = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/reducedRows_filtered_dataset.csv'
+
 tot_sum = 0
 
+#Check the length of column 2 in each row of a CSV file.
+#Args: file_path (str): The path to the CSV file.
+#Returns: None
 def check_column_2_length(file_path):
-    """
-    Check the length of column 2 in each row of a CSV file.
-
-    Args:
-        file_path (str): The path to the CSV file.
-
-    Returns:
-        None
-    """
     with open(file_path, 'r', encoding='utf-8') as file:
         tot_sum = 0
         reader = csv.reader(file)
@@ -25,18 +25,10 @@ def check_column_2_length(file_path):
             else:
                 print(f"Row {i}: Column 2 missing")
 
-
+#Remove half of the duplicate columns from a CSV file and save the cleaned dataset to a new file.
+#Args: input_file (str): The path to the input CSV file., output_file (str): The path to the output CSV file.
+#Returns: None
 def remove_duplicate_columns(input_file, output_file):
-    """
-    Remove half of the duplicate columns from a CSV file and save the cleaned dataset to a new file.
-
-    Args:
-        input_file (str): The path to the input CSV file.
-        output_file (str): The path to the output CSV file.
-
-    Returns:
-        None
-    """
     with open(input_file, 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         header = next(reader)  # Read header row
@@ -75,17 +67,10 @@ def remove_duplicate_columns(input_file, output_file):
 
     print(f"Dataset with fewer columns saved to {output_file}")
 
+#Remove duplicate columns from a CSV file and save the cleaned dataset to a new file.
+#Args: input_file (str): The path to the input CSV file., output_file (str): The path to the output CSV file.
+#Returns: None
 def remove_duplicate_columns(input_file, output_file):
-    """
-    Remove duplicate columns from a CSV file and save the cleaned dataset to a new file.
-
-    Args:
-        input_file (str): The path to the input CSV file.
-        output_file (str): The path to the output CSV file.
-
-    Returns:
-        None
-    """
     with open(input_file, 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         header = next(reader)  # Read header row
@@ -125,20 +110,10 @@ def remove_duplicate_columns(input_file, output_file):
 
     print(f"Dataset with fewer columns saved to {output_file}")
 
-import random
-
+#Limit the number of rows in a CSV file to a specified maximum.
+#Args: input_file (str): The path to the input CSV file., output_file (str): The path to the output CSV file., max_rows (int): The maximum number of rows to keep.
+#Returns: None
 def limit_rows(input_file, output_file, max_rows=500):
-    """
-    Limit the number of rows in a CSV file to a specified maximum.
-
-    Args:
-        input_file (str): The path to the input CSV file.
-        output_file (str): The path to the output CSV file.
-        max_rows (int): The maximum number of rows to keep.
-
-    Returns:
-        None
-    """
     with open(input_file, 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         header = next(reader)  # Read header row
@@ -156,25 +131,14 @@ def limit_rows(input_file, output_file, max_rows=500):
 
     print(f"Dataset with {min(max_rows, len(rows)-1)} rows saved to {output_file}")
 
-
+#Counts the number of rows in a CSV file, excluding the header.
+#Args: file_path (str): The path to the CSV file.
+#Returns: int: The number of rows in the CSV file, excluding the header.
 def count_rows(file_path):
-    """
-    Counts the number of rows in a CSV file, excluding the header.
-
-    Args:
-        file_path (str): The path to the CSV file.
-
-    Returns:
-        int: The number of rows in the CSV file, excluding the header.
-    """
     with open(file_path, 'r', encoding='utf-8') as file:
         reader = csv.reader(file)
         row_count = sum(1 for _ in reader) - 1  # Subtract 1 to exclude the header
     return row_count
-
-file_path = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/dataset.csv'
-input_file = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/cleaned_dataset.csv'
-output_file = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/limited_rows_dataset.csv'
 
 limit_rows(input_file, output_file)
 print(count_rows(input_file))
