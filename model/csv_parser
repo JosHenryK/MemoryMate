@@ -1,0 +1,146 @@
+import csv
+import random
+
+file_path = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/unfiltered_dataset.csv'
+input_file = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/filtered_dataset.csv'
+output_file = '/Users/donaldheddesheimer/Documents/GitHub/MemoryMate/model/datasets/reducedRows_filtered_dataset.csv'
+
+tot_sum = 0
+
+#check the length of column 2 in each row of a CSV file.
+#Args: file_path (str): The path to the CSV file
+#Returns: None
+def check_column_2_length(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        tot_sum = 0
+        reader = csv.reader(file)
+        next(reader)  # Skip the header row
+
+        for i, row in enumerate(reader, start=1):  # Start counting from row 1
+            if len(row) > 1:  # Ensure the row has at least two columns
+                col2_length = len(row[1])  # Check length of column 2
+                if col2_length > 5000:
+                    tot_sum += 1
+                print(f"Row {i}: {col2_length} characters")
+            else:
+                print(f"Row {i}: Column 2 missing")
+
+
+#remove half of the duplicate columns from a CSV file and save the cleaned dataset to a new file.
+#Args: input_file (str): The path to the input CSV file., output_file (str): The path to the output CSV file.
+#Returns: None
+def remove_duplicate_columns(input_file, output_file):
+    with open(input_file, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        header = next(reader)  # Read header row
+
+        # Count occurrences of each column name
+        col_counts = {}
+        for col in header:
+            col_counts[col] = col_counts.get(col, 0) + 1
+
+        # Track which columns to keep
+        columns_to_keep = []
+        col_seen = {}
+
+        for col in header:
+            if col_counts[col] > 1:
+                # If it's a duplicate, keep only half of the duplicates
+                if col_seen.get(col, 0) < col_counts[col] // 2:
+                    columns_to_keep.append(col)
+                    col_seen[col] = col_seen.get(col, 0) + 1
+            else:
+                # Keep unique columns
+                columns_to_keep.append(col)
+
+        # Map header columns to the indices to keep in the filtered data
+        indices_to_keep = [i for i, col in enumerate(header) if col in columns_to_keep]
+
+        # Filter the rows based on selected columns
+        filtered_rows = [columns_to_keep]  # Start with new header
+        for row in reader:
+            filtered_rows.append([row[i] for i in indices_to_keep])
+
+    # Write the cleaned dataset to a new file
+    with open(output_file, 'w', encoding='utf-8', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(filtered_rows)
+
+    print(f"Dataset with fewer columns saved to {output_file}")
+
+#Remove duplicate columns from a CSV file and save the cleaned dataset to a new file.
+#Args: input_file (str): The path to the input CSV file., output_file (str): The path to the output CSV file.
+#Returns: None
+def remove_duplicate_columns(input_file, output_file):
+    with open(input_file, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        header = next(reader)  # Read header row
+        
+        # Count occurrences of each column name
+        col_counts = {}
+        for col in header:
+            col_counts[col] = col_counts.get(col, 0) + 1
+
+        # Track how many times we've kept each column
+        col_seen = {}
+        columns_to_keep = []
+        
+        # Track the columns we are keeping, ensuring to only keep half of duplicates
+        for col in header:
+            if col_counts[col] > 1:
+                # If it's a duplicate, keep only half of the duplicates
+                if col_seen.get(col, 0) < col_counts[col] // 2:
+                    columns_to_keep.append(col)
+                    col_seen[col] = col_seen.get(col, 0) + 1
+            else:
+                columns_to_keep.append(col)  # Keep unique columns
+        
+        # Map header columns to the indices to keep in the filtered data
+        indices_to_keep = [i for i, col in enumerate(header) if col in columns_to_keep]
+
+        # Filter the rows based on selected columns
+        filtered_rows = [columns_to_keep]  # Start with new header
+
+        for row in reader:
+            filtered_rows.append([row[i] for i in indices_to_keep])
+
+    # Write the cleaned dataset to a new file
+    with open(output_file, 'w', encoding='utf-8', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(filtered_rows)
+
+    print(f"Dataset with fewer columns saved to {output_file}")
+
+#Limit the number of rows in a CSV file to a specified maximum.
+#Args: input_file (str): The path to the input CSV file., output_file (str): The path to the output CSV file., max_rows (int): The maximum number of rows to keep.
+#Returns: None
+def limit_rows(input_file, output_file, max_rows=500):
+    with open(input_file, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        header = next(reader)  # Read header row
+        
+        rows = [header] + list(reader)  # Store header and rows together
+
+        # If there are more rows than max_rows, randomly select the required amount
+        if len(rows) > max_rows:
+            rows = [header] + random.sample(rows[1:], max_rows)  # Keep the header and select random rows
+
+    # Write the limited dataset to the new file
+    with open(output_file, 'w', encoding='utf-8', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerows(rows)
+
+    print(f"Dataset with {min(max_rows, len(rows)-1)} rows saved to {output_file}")
+
+#Counts the number of rows in a CSV file, excluding the header.
+#Args: file_path (str): The path to the CSV file.
+#Returns: int: The number of rows in the CSV file, excluding the header.
+def count_rows(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        reader = csv.reader(file)
+        row_count = sum(1 for _ in reader) - 1  # Subtract 1 to exclude the header
+    return row_count
+
+limit_rows(input_file, output_file)
+print(count_rows(input_file))
+print(count_rows(output_file))
