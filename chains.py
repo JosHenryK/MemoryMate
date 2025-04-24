@@ -5,7 +5,7 @@ from config import LLM_CONFIG
 
 #Create LLM processing chains. Returns a dictionary containing two processing chains:
 #    - 'key_points': A processing chain that identifies key points in a conversation.
-#   - 'summary': A processing chain that creates a summary of a conversation.
+#    - 'summary': A processing chain that creates a summary of a conversation.
 def create_chains():
     llm = ChatGoogleGenerativeAI(**LLM_CONFIG)
     

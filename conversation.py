@@ -7,13 +7,13 @@ class ConversationManager:
     def __init__(self):
         self.history = deque(maxlen=CONFIG["max_history"])
         self.active = False
-        
+    
     #Adds a user message to the conversation history.
     #Args: text (str): The user message to add.
     def add_message(self, text):
         self.history.append(f"User: {text}")
         logging.debug(f"Added message: {text}")
-        
+    
     #Clears the conversation history.
     def clear(self):
         self.history.clear()
