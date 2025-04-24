@@ -1,20 +1,17 @@
 import time
 import threading
 from config import CONFIG, get_save_path
-from tts_gui import configure_tts, speak
+from tts import configure_tts, speak
 from chains import create_chains
 from conversation import ConversationManager
 import speech_recognition as sr
-import trigger_detection
+import triggerDetection
 import logging
 import llm_gui
 import streamlit as st
 
+#Entry point of the application. Initializes components, creates dependencies, and starts necessary threads.
 def main():
-    """
-    Entry point of the application.
-    Initializes components, creates dependencies, and starts necessary threads.
-    """
     # Initialize components
     logging.basicConfig(level=logging.DEBUG)
     configure_tts()
