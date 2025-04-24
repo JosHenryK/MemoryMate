@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import Mock, patch
-from app import main
+from app_audio import main
 
 @patch('app.configure_tts')
 @patch('app.setup_recognizer')

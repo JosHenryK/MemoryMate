@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import Mock, patch
-from tts import configure_tts, speak
+from tts_gui import configure_tts, speak
 
 @pytest.fixture
 def mock_engine():
