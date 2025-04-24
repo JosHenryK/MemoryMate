@@ -22,7 +22,7 @@ def create_chains():
         "summary": summary_prompt | llm | StrOutputParser()
     }
 
+# Test chain creation
 if __name__ == "__main__":
-    # Test chain creation
     chains = create_chains()
     print("Chains created:", chains.keys())
