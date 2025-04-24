@@ -8,7 +8,7 @@ setuptools~=58.0.4
 packaging~=24.0
 pyparsing~=3.1.2
 zipp~=3.18.2
-SpeechRecognition
+SpeechRecognition~=3.14.1
 pytts3
 attrs~=24.2.0
 distro~=1.8.0
@@ -30,4 +30,11 @@ future~=0.18.2
 django-crispy-forms~=2.3
 torch~=2.5.1
 pyttsx3~=2.98
-transformers
+transformers~=4.49.0
+Kivy~=2.3.1
+langchain-google-genai~=2.0.10
+langchain-core~=0.3.37
+dotenv~=0.9.9
+python-dotenv~=1.0.1
+flet~=0.27.1
+protobuf~=5.29.3

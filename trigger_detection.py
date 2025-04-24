@@ -15,11 +15,11 @@ class TriggerDetectionSettings(object):
     trigger_phrases = []
     emotion_thresholds = {
         "sadness" : 0.5,
-        "joy" : 100,
-        "love" : 100,
-        "anger" : 0.5,
+        "joy" : 1,
+        "love" : 1,
+        "anger" : 0.7,
         "fear" : 0.12,
-        "surprise" : 0.5,
+        "surprise" : 0.7,
     }
 
     def __init__(self, trigger_phrases = None, emotion_thresholds=None):

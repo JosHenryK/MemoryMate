@@ -1,13 +1,13 @@
 import time
 import threading
 from config import CONFIG, get_save_path
-from tts import configure_tts, speak
+from tts_gui import configure_tts, speak
 from chains import create_chains
 from conversation import ConversationManager
 import speech_recognition as sr
 import trigger_detection
 import logging
-import llm
+import llm_gui
 import streamlit as st
 
 def main():
